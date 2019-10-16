@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Hello React</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    </head>
+    <body>
+        <script src='./build/react.js'></script>
+        <script src='./build/react-dom.js'></script>
+
+        <div id='app'></div>
+        <div id='app-jsx'></div>
+        
+        <script>
+            ReactDOM.render(
+                React.DOM.h1(
+                    {
+                        id: 'my-heading',
+                        className: 'pretty',
+                        htmlFor: 'me',
+                        style:{
+                            background: 'black',
+                            color: 'white',
+                            fontFamily: 'Verdana'
+                        }                    
+                    }, 
+                    React.DOM.span(null, 
+                                   React.DOM.span(null, 'Hell'),
+                                   'o '),
+                    'World!'),
+                document.getElementById('app')
+            );
+            
+            /*ReactDOM.render(
+                <h1 id="my-heading-jsx">
+                   
+                </h1>,
+                document.getElementById('app-jsx')
+            );*/
+
+
+        </script>
+    </body>
+</html>
