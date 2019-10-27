@@ -5,6 +5,7 @@
     </head>
     <body>
         <script src='./build/react.js'></script>
+        <script src='./build/react-with-addons.js'></script>
         <script src='./build/react-dom.js'></script>
 
         <div id='app'></div>
@@ -59,19 +60,55 @@
                 document.getElementById('app')
             );*/
 
-            // Component with stateful
-            myComponent = React.createClass({
-                propTypes:{
-                    text: React.PropTypes.string
+            // Component with stateful and livecycles
+
+            // Uso de mixin
+            var logMixin = {
+                log: function(methodName, args){
+                    console.log(methodName, args);
                 },
-                getDefaultProps: function(){
-                    return {
-                        text: ''
-                    }
+                // lifecycle functions
+                componentWillUpdate: function(){
+                    this.log('componentWillUpdate', arguments);
+                },
+                componentDidUpdate: function(){
+                    this.log('componentDidUpdate', arguments);
+                },
+                componentWillMount: function(){
+                    this.log('componentWillMount', arguments);
+                },
+                componentDidMount: function(){
+                    this.log('componentDidMount', arguments);
+                },
+                componentWillUnmount: function(){
+                    this.log('componentWillUnmount', arguments);
+                }
+                 // lifecycle functions
+            }
+
+            var myCounter = React.createClass({
+                mixins: [React.addons.PureRenderMixin],
+                /*shouldComponentUpdate: function (nextProps, nextState_ignore){
+                    return nextProps.count !== this.props.count;
+                },*/
+                proptTypes: {
+                    count: React.PropTypes.number.isRequired
+                },
+                render: function(){
+                    console.log('Counter::render()');
+                    return React.DOM.span(null, this.props.count);
+                }
+
+            });
+
+            myComponent = React.createClass({
+                //mixins: [logMixin],
+                propTypes:{
+                    defaultValue: React.PropTypes.string
                 },
                 getInitialState: function(){
                     return {
-                        text: this.props.text
+                        text: this.props.defaultValue
                     }
                 },
                 textChange: function(ev){
@@ -79,20 +116,37 @@
                         text: ev.target.value
                     })
                 }, 
+                componentWillReceiveProps: function(newProps){
+                    this.setState({
+                        text: newProps.defaultValue
+                    })
+                },
                 render: function(){
+
+                    console.log('TextArea::render()');
+                    var counter = null;
+
+                    if(this.state.text.length > 0){
+                        counter = React.DOM.h3(null,
+                                    React.createElement(myCounter, {
+                                        count: this.state.text.length
+                                    })
+                        );
+                    }
+
                     return React.DOM.div(null,
                                 React.DOM.textarea({
                                     value: this.state.text,
                                     onChange: this.textChange
                                 }),
-                                React.DOM.h3(null, this.state.text.length)
+                                counter
                     );
                 }
             });
 
-            ReactDOM.render(
+            var myTextAreaCounter = ReactDOM.render(
                 React.createElement(myComponent, {
-                    text: 'Bob'
+                    defaultValue: 'Hello'
                 }),
                 document.getElementById('app')
             );
